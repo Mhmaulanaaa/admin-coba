@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   runtimeConfig: {
     public: {
-      apiBase: ''
+      apiBase: process.env.NUXT_PUBLIC_API_BASE
     }
   },
   devServer: {

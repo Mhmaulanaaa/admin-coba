@@ -10,27 +10,27 @@ const { setAuth } = useAuth();
 
 const loading = ref(false);
 
-const handleLogin = async (data: { email: string; password: string }) => {
+const handleLogin = async (data: { username: string; password: string }) => {
   loading.value = true;
 
   try {
-    const res = await api.post("/login", {
-      username: data.email,
+    const res = (await api.post("/login", {
+      username: data.username,
       password: data.password,
-    });
+    })) as any;
 
-    // ✅ sekarang sudah langsung data
     setAuth(res);
 
+    console.log("LOGIN RES:", res);
+
     $toast.success("Login berhasil!", {
-      description: `Selamat datang ${res.data.username}`,
+      description: `Selamat datang ${res.user?.username}`,
     });
 
-    console.log(res.data);
-
-    // ✅ redirect
     await router.push("/dashboard");
   } catch (err: any) {
+    console.log("ERROR:", err);
+
     $toast.error("Login gagal", {
       description: err?.data?.message || "Username / password salah",
     });

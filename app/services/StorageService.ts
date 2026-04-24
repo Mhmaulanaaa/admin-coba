@@ -1,11 +1,17 @@
+export const useToken = () => {
+    return useCookie<string | null>("token");
+};
+
 export const getToken = () => {
-    return useCookie<string | null>("token").value;
+    return useToken().value;
 };
 
 export const setToken = (token: string) => {
-    useCookie("token").value = token;
+    const cookie = useToken();
+    cookie.value = token;
 };
 
 export const destroyToken = () => {
-    useCookie("token").value = null;
+    const cookie = useToken();
+    cookie.value = null;
 };

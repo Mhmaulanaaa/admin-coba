@@ -1,38 +1,32 @@
+import { getToken, destroyToken } from "~/services/StorageService";
+
 export const useApi = () => {
     const config = useRuntimeConfig();
-    const token = useCookie<string | null>("token");
 
     const api = $fetch.create({
-        baseURL: config.public.apiBase,
+        baseURL: config.public.apiBase || 'http://127.0.0.1:8000/api',
 
-        // ✅ REQUEST INTERCEPTOR
         onRequest({ options }) {
-            if (token.value) {
+            const token = getToken();
+
+            if (token) {
                 options.headers = {
                     ...(options.headers as any),
-                    Authorization: `Bearer ${token.value}`,
+                    Authorization: `Bearer ${token}`,
                     Accept: "application/json",
                 };
             }
         },
 
-        // ✅ RESPONSE SUCCESS
-        onResponse({ response }) {
-            return response._data; // 🔥 langsung return data (mirip axios interceptor kamu)
-        },
-
-        // ❌ ERROR HANDLING GLOBAL
         onResponseError({ response }) {
             if (response.status === 401) {
-                // 🔥 token invalid / expired
-                token.value = null;
+                destroyToken();
 
                 if (import.meta.client) {
                     navigateTo("/login");
                 }
             }
 
-            // lempar error biar bisa di-handle di component
             throw response._data || response;
         },
     });

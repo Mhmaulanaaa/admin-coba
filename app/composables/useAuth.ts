@@ -1,6 +1,7 @@
 import { setToken, destroyToken } from "~/services/StorageService";
 
 export const useAuth = () => {
+
     const user = useState<any>("user", () => null);
 
     const setAuth = (data: any) => {

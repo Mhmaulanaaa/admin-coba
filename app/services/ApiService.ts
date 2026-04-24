@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getToken, destroyToken } from "~/services/StorageService";
 
 let unauthorizedHandler: (() => void) | null = null;
 
@@ -7,16 +8,15 @@ export const setUnauthorizedHandler = (handler: () => void) => {
 };
 
 export const api = axios.create({
-    baseURL: "",
+    baseURL: "http://127.0.0.1:8000/api",
     headers: {
         Accept: "application/json",
     },
 });
 
-// ✅ REQUEST INTERCEPTOR (token)
+// ✅ REQUEST INTERCEPTOR
 api.interceptors.request.use((config) => {
-    // ambil token dari localStorage / cookie
-    const token = localStorage.getItem("token");
+    const token = getToken(); // 🔥 pakai cookie sekarang
 
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -27,10 +27,14 @@ api.interceptors.request.use((config) => {
 
 // ✅ RESPONSE INTERCEPTOR
 api.interceptors.response.use(
-    (response) => response.data, // 🔥 langsung return data
+    (response) => response.data,
     (error) => {
-        if (error.response?.status === 401 && unauthorizedHandler) {
-            unauthorizedHandler();
+        if (error.response?.status === 401) {
+            destroyToken();
+
+            if (unauthorizedHandler) {
+                unauthorizedHandler();
+            }
         }
 
         return Promise.reject(error.response || error);

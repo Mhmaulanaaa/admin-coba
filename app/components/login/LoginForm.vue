@@ -1,10 +1,10 @@
 <script setup lang="ts">
 const emit = defineEmits<{
-  submit: [data: { email: string; password: string }];
+  submit: [data: { username: string; password: string }];
 }>();
 
 const formData = reactive({
-  email: "",
+  username: "",
   password: "",
 });
 
@@ -50,7 +50,7 @@ const handleSubmit = () => {
         <UForm :state="formData" class="space-y-4" @submit="handleSubmit">
           <UFormField label="Username" name="Username" required>
             <UInput
-              v-model="formData.email"
+              v-model="formData.username"
               type="text"
               placeholder="Username"
               icon="i-lucide-user"
