@@ -4,7 +4,7 @@ export const useApi = () => {
     const config = useRuntimeConfig();
 
     const api = $fetch.create({
-        baseURL: config.public.apiBase || 'http://127.0.0.1:8000/api',
+        baseURL: config.public.apiBase || 'http://127.0.0.1:8000/api/v1',
 
         onRequest({ options }) {
             const token = getToken();
